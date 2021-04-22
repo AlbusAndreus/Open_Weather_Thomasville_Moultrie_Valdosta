@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 public class Main {
@@ -46,9 +47,8 @@ public class Main {
                     e.printStackTrace();
                 }
 
-                TimeZone asiaSingapore = TimeZone.setDefault("New York, USA");
-                TimeZone zone = new SimpleTimeZone(Zone);
-                System.out.println(LocalDateTime.now().toEpochSecond(new TimeZone()));
+
+                //System.out.println(LocalDateTime.now().toEpochSecond(new TimeZone()));
                 Map<String, Object> respMap = jsonToMap(result.toString());
                 Map<String, Object> mainMap = jsonToMap(respMap.get("list").toString());
                 Map<String, Object> windMap = jsonToMap(mainMap.get("main").toString());
@@ -131,7 +131,30 @@ public class Main {
                 );
                 return map;
             }
+            public static String parseData(String json){
+                LocalDateTime nowTimeLocalDateTime = LocalDateTime.now();
+                long nowTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+                LocalDateTime nineOClock = LocalDateTime.of(nowTimeLocalDateTime.getYear(), nowTimeLocalDateTime.getMonthValue(), nowTimeLocalDateTime.getDayOfMonth(), 9, 0, 0, 0);
+                long nineOClockMillis = nineOClock.toEpochSecond(ZoneOffset.UTC);
+                int index = json.indexOf((int) nineOClockMillis);
+                int endindex = json.indexOf("\"dt\":");
+                String data = json.substring(index, endindex);
 
+                return data;
+            }
+            public static String parseTemp(String data){
+                int index = data.indexOf("\"temp\":");
+                int indexEnd = data.indexOf(",");
+
+                String temp = data.substring(index, indexEnd);
+                return temp;
+            }
+            public static String parseWindSpeed(String data){
+                int index = data.indexOf("\"speed\":");
+                String[] split = data.substring(0,index).split(",");
+                int endIndex = split[0].indexOf(",");
+                String windSpeed =
+            }
 }
 
 
